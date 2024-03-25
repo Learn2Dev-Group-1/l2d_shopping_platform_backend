@@ -21,9 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# please specify value in .env file
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# please specify value in .env file
 DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
@@ -75,6 +77,9 @@ WSGI_APPLICATION = 'l2d_shopping_platform_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# please specify the following values in the .env file
+# DB_USER and DB_PASSWORD are dependent on how you
+# set up postgres on your system
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
