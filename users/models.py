@@ -18,6 +18,10 @@ class UserProfile(models.Model):
         NON_BINARY = 'N'
         PREFER_NOT_TO_SAY = 'P'
 
+    class UserType(models.TextChoices):
+        BUYER = 'Buyer'
+        SELLER = 'Seller'
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -26,20 +30,8 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField(null=True)
     gender = models.CharField(choices=Gender.choices, max_length=1, null=True)
     address = models.CharField(max_length=512, null=True)
+    user_type = models.CharField(choices=UserType.choices, max_length=6, default='Buyer')
 
-
-class Seller(models.Model):
-    user_profile = models.OneToOneField(
-        UserProfile,
-        on_delete=models.CASCADE,
-    )
-
-
-class Buyer(models.Model):
-    user_profile = models.OneToOneField(
-        UserProfile,
-        on_delete=models.CASCADE,
-    )
 
 def create_profile(sender, instance, created, **kwargs):
     if created:

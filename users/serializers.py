@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, UserProfile, Buyer, Seller
+from .models import User, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['full_name', 'date_of_birth', 'gender', 'address']
+        fields = ['full_name', 'date_of_birth', 'gender', 'address', 'user_type']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data) 
