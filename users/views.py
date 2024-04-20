@@ -1,5 +1,5 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from datetime import datetime, timedelta
@@ -9,7 +9,7 @@ from .serializers import UserSerializer
 from .models import User
 
 
-class RegisterView(APIView):
+class UserRegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -17,7 +17,30 @@ class RegisterView(APIView):
         return Response(serializer.data)
     
 
-class LoginView(APIView):
+class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class CurrentUserRetrieveView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        
+        try:
+            payload = jwt.decode(token, key='secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
+
+
+class UserLoginView(APIView):
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
@@ -48,25 +71,7 @@ class LoginView(APIView):
         return response
     
 
-class UserView(APIView):
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
-
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
-        
-        try:
-            payload = jwt.decode(token, key='secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
-
-        return Response(serializer.data)
-    
-    
-class LogoutView(APIView):
+class UserLogoutView(APIView):
     def post(self, request):
         response = Response()
         response.delete_cookie('jwt')
