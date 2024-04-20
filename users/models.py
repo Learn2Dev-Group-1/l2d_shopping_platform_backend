@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
 
 class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
@@ -21,10 +22,10 @@ class UserProfile(models.Model):
         User,
         on_delete=models.CASCADE,
     )
-    full_name = models.CharField(max_length=255)
-    date_of_birth = models.DateField()
-    gender = models.CharField(choices=Gender.choices, max_length=1)
-    address = models.CharField(max_length=512)
+    full_name = models.CharField(max_length=255, null=True)
+    date_of_birth = models.DateField(null=True)
+    gender = models.CharField(choices=Gender.choices, max_length=1, null=True)
+    address = models.CharField(max_length=512, null=True)
 
 
 class Seller(models.Model):
@@ -39,3 +40,10 @@ class Buyer(models.Model):
         UserProfile,
         on_delete=models.CASCADE,
     )
+
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        user_profile = UserProfile(user=instance)
+        user_profile.save()
+
+post_save.connect(create_profile, sender=User)

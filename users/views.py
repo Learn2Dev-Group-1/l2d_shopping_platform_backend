@@ -5,8 +5,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from datetime import datetime, timedelta
 import jwt
 
-from .serializers import UserSerializer
-from .models import User
+from .serializers import UserSerializer, UserProfileSerializer
+from .models import User, UserProfile
 
 
 class UserRegisterView(APIView):
@@ -79,3 +79,8 @@ class UserLogoutView(APIView):
             "message": "success"
         }
         return response
+
+
+class UserProfileRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
