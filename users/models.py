@@ -27,14 +27,14 @@ class UserProfile(models.Model):
 
 
 class Seller(models.Model):
-    user = models.OneToOneField(
-        User,
+    user_profile = models.OneToOneField(
+        UserProfile,
         on_delete=models.CASCADE,
     )
 
 
 class Buyer(models.Model):
-    user = models.OneToOneField(
-        User,
+    user_profile = models.OneToOneField(
+        UserProfile,
         on_delete=models.CASCADE,
     )
