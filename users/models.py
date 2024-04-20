@@ -24,3 +24,9 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField()
     gender = models.CharField(choices=Gender.choices, max_length=1)
     address = models.CharField(max_length=512)
+
+class Seller(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+    )
