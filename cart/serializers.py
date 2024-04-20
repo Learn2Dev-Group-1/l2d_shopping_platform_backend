@@ -34,11 +34,19 @@ class AddCartItemSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        product_id = data['product_id']
-        quantity = data['quantity']
-        product = Product.objects.get(pk=product_id)
-        if quantity > product.stock:
+        # ... other validations (like product_id check) ...
+
+        product = Product.objects.get(pk=data['product_id'])
+        cart = Cart.objects.get(pk=self.context["cart_id"])  # Access the cart
+
+        # Combined quantity check
+        new_quantity = data.get('quantity', 1)  # Default to 1 if not in data
+        existing_quantity = cart.items.filter(product=product).first()
+        existing_quantity = existing_quantity.quantity if existing_quantity else 0
+
+        if new_quantity + existing_quantity > product.stock:
             raise serializers.ValidationError("Not enough stock available.")
+
         return data
 
     def save(self, **kwargs):
