@@ -29,5 +29,6 @@ router.register(r"product", views.ProductViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("catalog/", include(router.urls))
+    path("catalog/", include(router.urls)),
+    path("", include('cart.urls', namespace='cart'))
 ]
